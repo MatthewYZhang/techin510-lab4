@@ -6,6 +6,12 @@ class Database:
         self.con = psycopg2.connect(database_url)
         self.cur = self.con.cursor()
 
+    def __enter__(self):
+        return self
+    
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.con.close()
+
     def create_table(self):
         q = """
         CREATE TABLE IF NOT EXISTS books (
@@ -23,7 +29,7 @@ class Database:
 
     def truncate_table(self):
         q = """
-        TRUNCATE TABLE quotes
+        TRUNCATE TABLE books
         """
         self.cur.execute(q)
         self.con.commit()
@@ -49,12 +55,12 @@ class Database:
             query += f" ORDER BY {sort_column} " if sort_column is not None else ""
             query += "DESC" if sort_order != "from low to high" else "ASC"
             print(query, search_query)
-            self.cur.execute(query + ' LIMIT 50', ('%' + search_query + '%', ))
+            self.cur.execute(query + ' ', ('%' + search_query + '%', ))
         elif sort_column:
             query += f" ORDER BY {sort_column} "
             query += "DESC" if sort_order != "from low to high" else "ASC"
-            self.cur.execute(query + ' LIMIT 50')
+            self.cur.execute(query + ' ')
         else:
-            self.cur.execute(query + ' LIMIT 50')
+            self.cur.execute(query + ' ')
 
         return self.cur.fetchall()

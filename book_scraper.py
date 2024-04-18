@@ -3,13 +3,13 @@ import os
 from db import Database
 from dotenv import load_dotenv
 import requests
-from bs4 import BeautifulSoup # type: ignore
+from bs4 import BeautifulSoup
 from db import Database
 
 load_dotenv()
-db = Database(os.getenv('DATABASE_URL'))
 
-def get_data():
+
+def get_data(db:Database):
     page_num = 1
     stop = False
     star_dict = {'one':1, 'two':2, 'three':3, 'four':4, 'five':5}
@@ -33,8 +33,8 @@ def get_data():
             book['title'], book['star'], book['price'], book['in_stock'], book['url'] = title, star, price, in_stock, image_url
             db.insert_book(book)
 
-
-db.truncate_table()
-db.create_table()
-get_data()
+with Database(os.getenv('DATABASE_URL')) as db:
+    db.truncate_table()
+    db.create_table()
+    get_data(db)
     
