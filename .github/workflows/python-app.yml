@@ -1,4 +1,4 @@
-name: run main.py
+name: run book_scraper.py
 
 on:
   schedule:
@@ -21,5 +21,5 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: execute py script # run main.py
+      - name: execute py script # run book_scraper.py
         run: python book_scraper.py
